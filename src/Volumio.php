@@ -228,12 +228,12 @@ class Volumio
      *
      * @throws \Exception
      */
-    public function repeat(bool $value = null): array
+    public function repeat(?bool $value = null): array
     {
         $endpoint = '/api/v1/commands/?cmd=repeat';
 
         if ($value !== null) {
-            $endpoint .= '&value=' . ($value ? 'true' : 'false');
+            $endpoint .= '&value='.($value ? 'true' : 'false');
         }
 
         return $this->request('GET', $endpoint);
@@ -246,12 +246,12 @@ class Volumio
      *
      * @throws \Exception
      */
-    public function random(bool $value = null): array
+    public function random(?bool $value = null): array
     {
         $endpoint = '/api/v1/commands/?cmd=random';
 
         if ($value !== null) {
-            $endpoint .= '&value=' . ($value ? 'true' : 'false');
+            $endpoint .= '&value='.($value ? 'true' : 'false');
         }
 
         return $this->request('GET', $endpoint);
@@ -288,25 +288,25 @@ class Volumio
      *
      * @throws \Exception
      */
-    public function browse(string $uri = null, int $limit = null, int $offset = null): array
+    public function browse(?string $uri = null, ?int $limit = null, ?int $offset = null): array
     {
         $endpoint = '/api/v1/browse';
         $params = [];
 
         if ($uri !== null) {
-            $params[] = 'uri=' . urlencode($uri);
+            $params[] = 'uri='.urlencode($uri);
         }
 
         if ($limit !== null) {
-            $params[] = 'limit=' . $limit;
+            $params[] = 'limit='.$limit;
         }
 
         if ($offset !== null) {
-            $params[] = 'offset=' . $offset;
+            $params[] = 'offset='.$offset;
         }
 
-        if (!empty($params)) {
-            $endpoint .= '?' . implode('&', $params);
+        if (! empty($params)) {
+            $endpoint .= '?'.implode('&', $params);
         }
 
         return $this->request('GET', $endpoint);
@@ -321,7 +321,7 @@ class Volumio
      */
     public function search(string $query): array
     {
-        return $this->request('GET', '/api/v1/search?query=' . urlencode($query));
+        return $this->request('GET', '/api/v1/search?query='.urlencode($query));
     }
 
     /**
@@ -382,6 +382,7 @@ class Volumio
     public function ping(): string
     {
         $response = $this->request('GET', '/api/v1/ping');
+
         return $response['response'] ?? 'pong';
     }
 
@@ -438,7 +439,7 @@ class Volumio
      */
     public function removePushNotificationUrl(string $url): array
     {
-        return $this->request('DELETE', '/api/v1/pushNotificationUrls?url=' . urlencode($url));
+        return $this->request('DELETE', '/api/v1/pushNotificationUrls?url='.urlencode($url));
     }
 
     /**
