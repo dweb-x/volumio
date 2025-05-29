@@ -149,6 +149,178 @@ class VolumioTest extends TestCase
         $this->assertEquals('play', $result['status']);
     }
 
+    public function test_next_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['status' => 'play', 'position' => 1])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test next method
+        $result = $volumio->next();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('status', $result);
+        $this->assertEquals('play', $result['status']);
+        $this->assertArrayHasKey('position', $result);
+        $this->assertEquals(1, $result['position']);
+    }
+
+    public function test_previous_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['status' => 'play', 'position' => 0])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test previous method
+        $result = $volumio->previous();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('status', $result);
+        $this->assertEquals('play', $result['status']);
+        $this->assertArrayHasKey('position', $result);
+        $this->assertEquals(0, $result['position']);
+    }
+
+    public function test_stop_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['status' => 'stop'])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test stop method
+        $result = $volumio->stop();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('status', $result);
+        $this->assertEquals('stop', $result['status']);
+    }
+
+    public function test_volume_up_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['volume' => 60])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test volumeUp method
+        $result = $volumio->volumeUp();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('volume', $result);
+        $this->assertEquals(60, $result['volume']);
+    }
+
+    public function test_volume_down_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['volume' => 40])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test volumeDown method
+        $result = $volumio->volumeDown();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('volume', $result);
+        $this->assertEquals(40, $result['volume']);
+    }
+
+    public function test_mute_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['volume' => 0, 'mute' => true])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test mute method
+        $result = $volumio->mute();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('volume', $result);
+        $this->assertEquals(0, $result['volume']);
+        $this->assertArrayHasKey('mute', $result);
+        $this->assertTrue($result['mute']);
+    }
+
+    public function test_unmute_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['volume' => 50, 'mute' => false])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test unmute method
+        $result = $volumio->unmute();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('volume', $result);
+        $this->assertEquals(50, $result['volume']);
+        $this->assertArrayHasKey('mute', $result);
+        $this->assertFalse($result['mute']);
+    }
+
+    public function test_play_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['status' => 'play', 'position' => 2])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test play method with position
+        $result = $volumio->play(2);
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('status', $result);
+        $this->assertEquals('play', $result['status']);
+        $this->assertArrayHasKey('position', $result);
+        $this->assertEquals(2, $result['position']);
+    }
+
+    public function test_clear_queue_method(): void
+    {
+        // Create a mock handler
+        $mock = new MockHandler([
+            new Response(200, [], json_encode(['success' => true])),
+        ]);
+        $handlerStack = HandlerStack::create($mock);
+        $client = new Client(['handler' => $handlerStack]);
+
+        $volumio = $this->createMockedVolumio($client);
+
+        // Test clearQueue method
+        $result = $volumio->clearQueue();
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('success', $result);
+        $this->assertTrue($result['success']);
+    }
+
     /**
      * Helper method to create a mocked Volumio instance
      */
