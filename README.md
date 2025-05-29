@@ -14,6 +14,14 @@ With this package, you can:
 - Adjust volume
 - Manage the queue
 - Get player state and queue information
+- Control playback modes (repeat, random)
+- Manage playlists
+- Browse and search the music library
+- Add items to the queue or replace the queue
+- Get collection statistics
+- Manage multi-room zones
+- Get system information
+- Set up push notifications
 
 This package is compatible with Laravel 12 and connects to the Volumio REST API.
 
@@ -127,6 +135,7 @@ $queue = Volumio::getQueue();
 
 // Playback controls
 Volumio::toggle(); // Play/pause
+Volumio::pause(); // Pause playback
 Volumio::next(); // Next track
 Volumio::previous(); // Previous track
 Volumio::stop(); // Stop playback
@@ -148,6 +157,60 @@ Volumio::setVolume(Volume::UNMUTE); // Unmute
 // Queue management
 Volumio::play(2); // Play a specific item from the queue (0-based index)
 Volumio::clearQueue(); // Clear the queue
+
+// Playback modes
+Volumio::repeat(); // Toggle repeat mode
+Volumio::repeat(true); // Enable repeat mode
+Volumio::repeat(false); // Disable repeat mode
+Volumio::random(); // Toggle random mode
+Volumio::random(true); // Enable random mode
+Volumio::random(false); // Disable random mode
+
+// Playlist management
+$playlists = Volumio::listPlaylists(); // Get list of playlists
+Volumio::playPlaylist('Rock'); // Play a specific playlist
+
+// Browsing and searching
+$root = Volumio::browse(); // Browse root directory
+$musicLibrary = Volumio::browse('music-library'); // Browse music library
+$limitedResults = Volumio::browse('music-library', 10, 5); // Limit to 10 results, starting from the 5th
+$searchResults = Volumio::search('Pink Floyd'); // Search for content
+
+// Advanced queue management
+$items = [
+    [
+        'uri' => 'music-library/song.flac',
+        'service' => 'mpd',
+        'title' => 'Song Title',
+        'artist' => 'Artist Name',
+        'album' => 'Album Name',
+        'type' => 'song',
+    ],
+];
+Volumio::addToQueue($items); // Add items to queue
+
+$data = [
+    'item' => [
+        'uri' => 'music-library/song.flac',
+        'service' => 'mpd',
+        'title' => 'Song Title',
+    ],
+    'list' => $items,
+    'index' => 0,
+];
+Volumio::replaceAndPlay($data); // Replace queue and play
+
+// System information
+$stats = Volumio::getCollectionStats(); // Get collection statistics
+$zones = Volumio::getZones(); // Get information about Volumio zones
+$pong = Volumio::ping(); // Ping the Volumio API
+$version = Volumio::getSystemVersion(); // Get system version
+$info = Volumio::getSystemInfo(); // Get system information
+
+// Push notifications
+$urls = Volumio::getPushNotificationUrls(); // Get list of push notification URLs
+Volumio::addPushNotificationUrl('http://example.com/callback'); // Add a push notification URL
+Volumio::removePushNotificationUrl('http://example.com/callback'); // Remove a push notification URL
 ```
 
 Or you can inject the Volumio service:

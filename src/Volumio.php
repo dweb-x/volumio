@@ -100,6 +100,16 @@ class Volumio
     }
 
     /**
+     * Pause the current track.
+     *
+     * @throws \Exception
+     */
+    public function pause(): array
+    {
+        return $this->request('GET', '/api/v1/commands/?cmd=pause');
+    }
+
+    /**
      * Play the next track.
      *
      * @throws \Exception
@@ -209,6 +219,226 @@ class Volumio
     public function clearQueue(): array
     {
         return $this->request('GET', '/api/v1/commands/?cmd=clearQueue');
+    }
+
+    /**
+     * Set repeat mode.
+     *
+     * @param  bool|null  $value  True to enable repeat, false to disable, null to toggle
+     *
+     * @throws \Exception
+     */
+    public function repeat(bool $value = null): array
+    {
+        $endpoint = '/api/v1/commands/?cmd=repeat';
+
+        if ($value !== null) {
+            $endpoint .= '&value=' . ($value ? 'true' : 'false');
+        }
+
+        return $this->request('GET', $endpoint);
+    }
+
+    /**
+     * Set random mode.
+     *
+     * @param  bool|null  $value  True to enable random, false to disable, null to toggle
+     *
+     * @throws \Exception
+     */
+    public function random(bool $value = null): array
+    {
+        $endpoint = '/api/v1/commands/?cmd=random';
+
+        if ($value !== null) {
+            $endpoint .= '&value=' . ($value ? 'true' : 'false');
+        }
+
+        return $this->request('GET', $endpoint);
+    }
+
+    /**
+     * Get the list of available playlists.
+     *
+     * @throws \Exception
+     */
+    public function listPlaylists(): array
+    {
+        return $this->request('GET', '/api/v1/listplaylists');
+    }
+
+    /**
+     * Play a specific playlist.
+     *
+     * @param  string  $name  The name of the playlist to play
+     *
+     * @throws \Exception
+     */
+    public function playPlaylist(string $name): array
+    {
+        return $this->request('GET', "/api/v1/commands/?cmd=playplaylist&name={$name}");
+    }
+
+    /**
+     * Browse the music library.
+     *
+     * @param  string|null  $uri  The URI to browse (null for root)
+     * @param  int|null  $limit  Limit the number of results
+     * @param  int|null  $offset  Start from the nth result
+     *
+     * @throws \Exception
+     */
+    public function browse(string $uri = null, int $limit = null, int $offset = null): array
+    {
+        $endpoint = '/api/v1/browse';
+        $params = [];
+
+        if ($uri !== null) {
+            $params[] = 'uri=' . urlencode($uri);
+        }
+
+        if ($limit !== null) {
+            $params[] = 'limit=' . $limit;
+        }
+
+        if ($offset !== null) {
+            $params[] = 'offset=' . $offset;
+        }
+
+        if (!empty($params)) {
+            $endpoint .= '?' . implode('&', $params);
+        }
+
+        return $this->request('GET', $endpoint);
+    }
+
+    /**
+     * Search for content.
+     *
+     * @param  string  $query  The search query
+     *
+     * @throws \Exception
+     */
+    public function search(string $query): array
+    {
+        return $this->request('GET', '/api/v1/search?query=' . urlencode($query));
+    }
+
+    /**
+     * Add items to the queue.
+     *
+     * @param  array  $items  The items to add to the queue
+     *
+     * @throws \Exception
+     */
+    public function addToQueue(array $items): array
+    {
+        return $this->request('POST', '/api/v1/addToQueue', [
+            'json' => $items,
+        ]);
+    }
+
+    /**
+     * Replace the queue and play.
+     *
+     * @param  array  $data  The data containing items to play
+     *                       Format: ['item' => $item, 'list' => $list, 'index' => $index]
+     *                       or a single item
+     *
+     * @throws \Exception
+     */
+    public function replaceAndPlay(array $data): array
+    {
+        return $this->request('POST', '/api/v1/replaceAndPlay', [
+            'json' => $data,
+        ]);
+    }
+
+    /**
+     * Get collection statistics.
+     *
+     * @throws \Exception
+     */
+    public function getCollectionStats(): array
+    {
+        return $this->request('GET', '/api/v1/collectionstats');
+    }
+
+    /**
+     * Get information about Volumio zones.
+     *
+     * @throws \Exception
+     */
+    public function getZones(): array
+    {
+        return $this->request('GET', '/api/v1/getzones');
+    }
+
+    /**
+     * Ping the Volumio API.
+     *
+     * @throws \Exception
+     */
+    public function ping(): string
+    {
+        $response = $this->request('GET', '/api/v1/ping');
+        return $response['response'] ?? 'pong';
+    }
+
+    /**
+     * Get system version information.
+     *
+     * @throws \Exception
+     */
+    public function getSystemVersion(): array
+    {
+        return $this->request('GET', '/api/v1/getSystemVersion');
+    }
+
+    /**
+     * Get system information.
+     *
+     * @throws \Exception
+     */
+    public function getSystemInfo(): array
+    {
+        return $this->request('GET', '/api/v1/getSystemInfo');
+    }
+
+    /**
+     * Get the list of push notification URLs.
+     *
+     * @throws \Exception
+     */
+    public function getPushNotificationUrls(): array
+    {
+        return $this->request('GET', '/api/v1/pushNotificationUrls');
+    }
+
+    /**
+     * Add a push notification URL.
+     *
+     * @param  string  $url  The URL to add
+     *
+     * @throws \Exception
+     */
+    public function addPushNotificationUrl(string $url): array
+    {
+        return $this->request('POST', '/api/v1/pushNotificationUrls', [
+            'json' => ['url' => $url],
+        ]);
+    }
+
+    /**
+     * Remove a push notification URL.
+     *
+     * @param  string  $url  The URL to remove
+     *
+     * @throws \Exception
+     */
+    public function removePushNotificationUrl(string $url): array
+    {
+        return $this->request('DELETE', '/api/v1/pushNotificationUrls?url=' . urlencode($url));
     }
 
     /**
