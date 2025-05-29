@@ -5,7 +5,17 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/dweb-x/volumio/fix-php-code-style-issues.yml?branch=master&label=code%20style&style=flat-square)](https://github.com/dweb-x/volumio/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/dweb-x/volumio.svg?style=flat-square)](https://packagist.org/packages/dweb-x/volumio)
 
-Laravel 12 Package for connection to Volumio REST API.
+## Introduction
+
+This package provides a simple and elegant way to interact with the Volumio audio player API from your Laravel application. [Volumio](https://volumio.com/) is a free and open source Linux distribution designed for music playback with a focus on sound quality.
+
+With this package, you can:
+- Control playback (play, pause, stop, next, previous)
+- Adjust volume
+- Manage the queue
+- Get player state and queue information
+
+This package is compatible with Laravel 12 and connects to the Volumio REST API.
 
 [Official Docs](https://developers.volumio.com/api/rest-api)
 
@@ -121,14 +131,23 @@ Volumio::next(); // Next track
 Volumio::previous(); // Previous track
 Volumio::stop(); // Stop playback
 
-// Set volume (0-100)
-Volumio::setVolume(75);
+// Volume controls
+Volumio::setVolume(75); // Set volume (0-100)
+Volumio::volumeUp(); // Increase volume
+Volumio::volumeDown(); // Decrease volume
+Volumio::mute(); // Mute volume
+Volumio::unmute(); // Unmute volume
 
-// Play a specific item from the queue (0-based index)
-Volumio::play(2);
+// You can also use the Volume enum
+use Dwebx\Volumio\Enums\Volume;
+Volumio::setVolume(Volume::PLUS); // Increase volume
+Volumio::setVolume(Volume::MINUS); // Decrease volume
+Volumio::setVolume(Volume::MUTE); // Mute
+Volumio::setVolume(Volume::UNMUTE); // Unmute
 
-// Clear the queue
-Volumio::clearQueue();
+// Queue management
+Volumio::play(2); // Play a specific item from the queue (0-based index)
+Volumio::clearQueue(); // Clear the queue
 ```
 
 Or you can inject the Volumio service:
@@ -149,6 +168,38 @@ class MyController
 }
 ```
 
+## Response Format
+
+All methods return an array containing the response from the Volumio API. The exact structure of the response depends on the method called. For example:
+
+```php
+// Example response from getState()
+[
+    'status' => 'play',
+    'title' => 'Song Title',
+    'artist' => 'Artist Name',
+    'album' => 'Album Name',
+    'volume' => 50,
+    // ... other state information
+]
+```
+
+## Error Handling
+
+The package will automatically retry failed requests based on your configuration. If all retry attempts fail, an exception will be thrown. You should wrap your API calls in a try-catch block to handle potential errors:
+
+```php
+use Dwebx\Volumio\Facades\Volumio;
+
+try {
+    $state = Volumio::getState();
+    // Process the state
+} catch (\Exception $e) {
+    // Handle the error
+    Log::error('Volumio API error: ' . $e->getMessage());
+}
+```
+
 ## Testing
 
 ```bash
@@ -157,8 +208,8 @@ composer test
 
 ## Credits
 
-- [David Carruthers](https://github.com/dweb-x)
 - [Volumio](https://developers.volumio.com/)
+- [David Carruthers](https://github.com/dweb-x)
 
 ## License
 
