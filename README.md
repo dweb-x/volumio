@@ -67,7 +67,7 @@ return [
 
 ## Configuration
 
-The package comes with a comprehensive configuration file that allows you to customize how the Volumio API client behaves. Here's a detailed explanation of each configuration option:
+The package comes with a configuration file that allows you to customize how the Volumio API client behaves. Here's a detailed explanation of each configuration option:
 
 ### Base URL
 
@@ -118,7 +118,7 @@ The client uses an exponential backoff strategy for retries, meaning each subseq
 ],
 ```
 
-These are the default HTTP headers that will be sent with every request to the Volumio API. The default headers are set to work with the Volumio API's JSON responses. You typically won't need to modify these unless the API requirements change.
+These are the default HTTP headers that will be sent with every request to the Volumio API. The default headers are set to work with the Volumio API's JSON responses. You typically won't need to modify these.
 
 ## Usage
 
